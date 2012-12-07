@@ -21,7 +21,7 @@
 	function processa() {
 		parseia();
 		balanco();
-		//liquidez();
+		liquidez();
 	}
 	
 	
@@ -154,8 +154,14 @@
 	function liquidez()
 	{
 		txt = ""
-		txt += "\\\[\\it\\text{Liquidez Imediata} = \\frac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} = \\\]<br />\n";
-		txt += "\\\[\\it\\text{Liquidez Corrente} = \\frac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} = \\frac{" + periodo.AC + "}{" + periodo.PC + "} = " + (periodo.AC / periodo.PC).toPrecision(2) + "\\\]<br />\n";
+		txt += "\\\[\\it\\text{Liquidez Imediata} = \\dfrac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{\\text{aaa}}{\\text{bbb}} =  c\\\]<br />\n";
+		
+		txt += "\\\[\\it\\text{Liquidez Corrente} = \\dfrac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{" + periodo.AC + "}{" + periodo.PC + "} = " + (periodo.AC / periodo.PC).toPrecision(2) + "\\\]<br />\n";
+		
+		txt += "\\\[\\it\\text{Liquidez Seca} = \\dfrac{\\it\\text{Ativo circulante - Estoques}}{\\it\\text{Passivo circulante}} \\hspace{12pt} =  \\dfrac{\\text{aaa - bbb}}{\\text{ccc}} \\hspace{3pt} = d\\\]<br />\n";
+		
+		txt += "\\\[\\it\\text{Liquidez Seca} = \\dfrac{\\it\\text{Ativo circulante + Realizável a LP}}{\\it\\text{Passivo circulante + Exigível a LP}} \\hspace{18pt} = \\dfrac{\\text{aaa + bbb}}{\\text{ccc + ddd}} \\hspace{6pt} = eee\\\]<br />\n";
+		
 		
 		document.getElementById("tabs-3").innerHTML = txt;
 		
