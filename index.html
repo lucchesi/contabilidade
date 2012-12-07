@@ -25,22 +25,147 @@
 		ble = "";
 		periodos = new Array();
 		
-		function periodo()
+		function _periodo()
 		{
 			this.nome = "X1";
 			this.at_circ = new Array();
+			this.at_n_circ = new Array();
+			this.pa_circ = new Array();
+			this.pa_n_circ = new Array();
 		}
 		
+		periodo = null;
+		periodo = new _periodo();
 		for(i in lines)
 		{
-			asd = /#/.exec(lines[i]);
-			console.log(asd, lines[i])
-			if(!asd)
-				ble += lines[i] + "<br \\>";
+			asd = /Periodo/.exec(lines[i]);
+			if(asd)
+			{
+				asd = lines[i].split(" = ");
+				periodo.nome = asd[1];
+				continue;
+			}
+			
+			asd = /Ativo circulante/.exec(lines[i]);
+			if(asd)
+			{
+				ativo = true;
+				circ = true;
+				continue;
+			}
+			asd = /Passivo circulante/.exec(lines[i]);
+			if(asd)
+			{
+				ativo = false;
+				circ = true;
+				continue;
+			}
+			asd = /Ativo não circulante/.exec(lines[i]);
+			if(asd)
+			{
+				ativo = true;
+				circ = false;
+				continue;
+			}
+			asd = /Passivo não circulante/.exec(lines[i]);
+			if(asd)
+			{
+				ativo = false;
+				circ = false;
+				continue;
+			}
+			
+			if(lines[i])
+			{
+				asd = lines[i].split(" = ");
+				if(ativo)
+				{
+					if(circ)
+					{
+						periodo.at_circ[ asd[0] ] = asd[1];
+					}
+					else
+					{
+						periodo.at_n_circ[ asd[0] ] = asd[1];
+					}
+				}
+				else
+				{
+					if(circ)
+					{
+						periodo.pa_circ[ asd[0] ] = asd[1];
+					}
+					else
+					{
+						periodo.pa_n_circ[ asd[0] ] = asd[1];
+					}
+				}
+			}
 		}
 		
+		k1 = 0;
+		tmp = "<b>Ativo circulante:</b><br />";
+		for (i in periodo.at_circ){
+			tmp += i + ": " + periodo.at_circ[i] + "</b><br />";
+			k1 += parseFloat(periodo.at_circ[i]);
+		}
+		tmp += "<i>total: " + k1 + "</i><br />";
+		periodo.AC = k1;
+		
+		tmp += "<br />";
+		
+		k2=0;
+		tmp += "<b>Ativo não circulante:</b><br />";
+		for (i in periodo.at_n_circ){
+			tmp += i + ": " + periodo.at_n_circ[i] + "</b><br />";
+			k2 += parseFloat(periodo.at_n_circ[i]);
+		}
+		tmp += "<i>total: " + k2 + "</i><br />";
+		periodo.ANC = k2;
+		
+		tmp += "<br />";
+		tmp += "<b><i>total ativo: " + (k1+k2) + "</i></b><br />";
+		periodo.A = k1 + k2;
+		document.getElementById("bp_ativo").innerHTML = tmp;
+		
+		k1 = 0;
+		tmp = "<b>Passivo circulante:</b><br />";
+		for (i in periodo.pa_circ){
+			tmp += i + ": " + periodo.pa_circ[i] + "</b><br />";
+			k1 += parseFloat(periodo.pa_circ[i]);
+		}
+		tmp += "<i>total: " + k1 + "</i><br />";
+		periodo.PC = k1;
+		
+		tmp += "<br />";
+		
+		k2 = 0;
+		tmp += "<b>Passivo não circulante:</b><br />";
+		for (i in periodo.pa_n_circ){
+			if (isNaN(parseFloat(periodo.pa_n_circ[i]))) continue;
+			tmp += i + ": " + periodo.pa_n_circ[i] + "</b><br />";
+			k2 += parseFloat(periodo.pa_n_circ[i]);
+		}
+		tmp += "<i>total: " + k2 + "</i><br />";
+		periodo.PNC = k2;
+		
+		tmp += "<br />";
+		tmp += "<b><i>total passivo: " + (k1+k2) + "</i></b><br />";
+		periodo.P = k1 + k2;
+		document.getElementById("bp_passivo").innerHTML = tmp;
+		/*
+		asd = /#/.exec(lines[i]);
+		console.log(asd, lines[i])
+		if(!asd)
+			ble += lines[i] + "<br \\>";
+		*/
+		tmp = "\\\[\\it\\text{Liquidez Imediata} = \\frac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} = \\\]";
+		tmp = "\\\[\\it\\text{Liquidez Corrente} = \\frac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} = \\frac{" + periodo.AC + "}{" + periodo.PC + "} = " + (periodo.AC / periodo.PC).toPrecision(2) + "\\\]";
 		document.getElementById("tabs-8").innerHTML = ble;
 		
+		document.getElementById("tabs-3").innerHTML = tmp;
+		
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 	}
     </script>
 </head>
@@ -72,6 +197,7 @@ Estoques = 260
 Máquinas  e equipamentos = 70
 Móveis = 10
 Instalações = 170
+Aquisição marca = 100
 
 # Passivo circulante:
 Impostos a pagar = 10
@@ -79,7 +205,6 @@ Fornecedores = 260
 
 # Passivo não circulante:
 Financiamento de Longo Prazo =  200
-Aquisição marca = 100
 Capital  = 280
 		</textarea><br />
     </div>
@@ -87,25 +212,15 @@ Capital  = 280
     <div id="tabs-2">
 		<table>
 			<tr valign="top">
-				<td>
-					Ativo:<br />
-				</td>
-				<td>
-					Passivo:<br />
-					<br />
-					Patrimônio:<br />
-				</td>
+				<td id="bp_ativo"> </td>
+				<td id="bp_passivo"> </td>
 			</tr>
 		</table>
-		<p>
-			[EM CONSTRUÇÃO]
-		</p>
     </div>
 	
 	
     <div id="tabs-3">
 		<p>
-			[EM CONSTRUÇÃO]
 		</p>
     </div>
 	
@@ -140,6 +255,22 @@ Capital  = 280
     </div>
 </div>
  
+ <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$','$'], ["\\[","\\]"] ],
+            processEscapes: true
+            },
+            TeX: {
+            extensions: ["AMSmath.js", "AMSsymbols.js"]
+            },
+            "HTML-CSS": { availableFonts: ["TeX"] }
+        });
+        </script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
  
 </body>
 </html>
