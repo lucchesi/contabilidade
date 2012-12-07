@@ -11,33 +11,44 @@
     <link rel="stylesheet" href="/resources/demos/style.css" />
 	
     <script>
-    $(function() {
-        $( "#tabs" ).tabs();
-    });
+	//## Abas ##//
+	$(function() {
+		$( "#tabs" ).tabs();
+	});
 	
 	
+	//## Processa tudo ##//
 	function processa() {
-		//## Parsear os dados ##//
-		bla = document.getElementById("dados").value;
-		lines = bla.split("\n");
-		ativo = false;
-		circ = false;
-		ble = "";
-		periodos = new Array();
+		parseia();
+		balanco();
+		//liquidez();
+	}
+	
+	
+	//## Parsear os dados ##//
+	function parseia() {
+		banana = document.getElementById("dados").value;
+		lines = banana.split("\n");
 		
+		// "Classe" dos periodos
 		function _periodo()
 		{
 			this.nome = "X1";
-			this.at_circ = new Array();
-			this.at_n_circ = new Array();
-			this.pa_circ = new Array();
-			this.pa_n_circ = new Array();
+			this.at_circ = [];
+			this.at_n_circ = [];
+			this.pa_circ = [];
+			this.pa_n_circ = [];
 		}
 		
+		periodos = [];
 		periodo = null;
 		periodo = new _periodo();
+		
+		window.ativo = false;
+		window.circ = false;
 		for(i in lines)
 		{
+			// Periodo novo
 			asd = /Periodo/.exec(lines[i]);
 			if(asd)
 			{
@@ -46,124 +57,107 @@
 				continue;
 			}
 			
-			asd = /Ativo circulante/.exec(lines[i]);
-			if(asd)
-			{
-				ativo = true;
-				circ = true;
-				continue;
-			}
-			asd = /Passivo circulante/.exec(lines[i]);
-			if(asd)
-			{
-				ativo = false;
-				circ = true;
-				continue;
-			}
-			asd = /Ativo não circulante/.exec(lines[i]);
-			if(asd)
-			{
-				ativo = true;
-				circ = false;
-				continue;
-			}
-			asd = /Passivo não circulante/.exec(lines[i]);
-			if(asd)
-			{
-				ativo = false;
-				circ = false;
-				continue;
-			}
-			
-			if(lines[i])
-			{
-				asd = lines[i].split(" = ");
-				if(ativo)
+			// Separa as categorias
+			function cebola(re, at, pass){
+				asd = re.exec(lines[i]);
+				if(asd)
 				{
-					if(circ)
-					{
-						periodo.at_circ[ asd[0] ] = asd[1];
-					}
-					else
-					{
-						periodo.at_n_circ[ asd[0] ] = asd[1];
-					}
+					window.ativo = at;
+					window.circ = pass;
+					return true;
 				}
 				else
-				{
+					return false;
+			}
+			if (cebola(/Ativo circulante/, true, true)) continue;
+			if (cebola(/Passivo circulante/, false, true)) continue;
+			if (cebola(/Ativo não circulante/, true, false)) continue;
+			if (cebola(/Passivo não circulante/, false, false)) continue;
+			
+			// Joga a linha na categoria atual
+			if(lines[i]) {
+				asd = lines[i].split(" = ");
+				if(isNaN(asd[1])) continue;
+				
+				if(window.ativo) {
 					if(circ)
-					{
-						periodo.pa_circ[ asd[0] ] = asd[1];
-					}
+						periodo.at_circ[ asd[0] ] = asd[1];
 					else
-					{
+						periodo.at_n_circ[ asd[0] ] = asd[1];
+				}
+				else {
+					if(window.circ)
+						periodo.pa_circ[ asd[0] ] = asd[1];
+					else
 						periodo.pa_n_circ[ asd[0] ] = asd[1];
-					}
 				}
 			}
 		}
 		
-		k1 = 0;
-		tmp = "<b>Ativo circulante:</b><br />";
-		for (i in periodo.at_circ){
-			tmp += i + ": " + periodo.at_circ[i] + "</b><br />";
-			k1 += parseFloat(periodo.at_circ[i]);
+	}
+	
+	
+	//## Balanço Patrimonial ##//
+	function balanco()
+	{
+		function bal(txt, lst) {
+			k = 0;
+			for (i in lst){
+				txt += i + ": " + lst[i] + "</b><br />";
+				k += parseFloat(lst[i]);
+			}
+			txt += "<i>total: " + k + "</i><br />";
+			
+			return [txt, k];
 		}
-		tmp += "<i>total: " + k1 + "</i><br />";
-		periodo.AC = k1;
 		
-		tmp += "<br />";
+		// Ativo
+		tmp = bal("<b>Ativo circulante:</b><br />", periodo.at_circ);
+		txt = tmp[0];
+		periodo.AC = tmp[1];
 		
-		k2=0;
-		tmp += "<b>Ativo não circulante:</b><br />";
-		for (i in periodo.at_n_circ){
-			tmp += i + ": " + periodo.at_n_circ[i] + "</b><br />";
-			k2 += parseFloat(periodo.at_n_circ[i]);
-		}
-		tmp += "<i>total: " + k2 + "</i><br />";
-		periodo.ANC = k2;
+		txt += "<br />";
 		
-		tmp += "<br />";
-		tmp += "<b><i>total ativo: " + (k1+k2) + "</i></b><br />";
-		periodo.A = k1 + k2;
-		document.getElementById("bp_ativo").innerHTML = tmp;
+		tmp = bal("<b>Ativo não circulante:</b><br />", periodo.at_n_circ);
+		txt += tmp[0];
+		periodo.ANC = tmp[1];
 		
-		k1 = 0;
-		tmp = "<b>Passivo circulante:</b><br />";
-		for (i in periodo.pa_circ){
-			tmp += i + ": " + periodo.pa_circ[i] + "</b><br />";
-			k1 += parseFloat(periodo.pa_circ[i]);
-		}
-		tmp += "<i>total: " + k1 + "</i><br />";
-		periodo.PC = k1;
+		txt += "<br />";
 		
-		tmp += "<br />";
+		txt += "<b><i>total ativo: " + (periodo.AC + periodo.ANC) + "</i></b><br />";
+		periodo.A = periodo.AC + periodo.ANC;
 		
-		k2 = 0;
-		tmp += "<b>Passivo não circulante:</b><br />";
-		for (i in periodo.pa_n_circ){
-			if (isNaN(parseFloat(periodo.pa_n_circ[i]))) continue;
-			tmp += i + ": " + periodo.pa_n_circ[i] + "</b><br />";
-			k2 += parseFloat(periodo.pa_n_circ[i]);
-		}
-		tmp += "<i>total: " + k2 + "</i><br />";
-		periodo.PNC = k2;
+		document.getElementById("bp_ativo").innerHTML = txt;
 		
-		tmp += "<br />";
-		tmp += "<b><i>total passivo: " + (k1+k2) + "</i></b><br />";
-		periodo.P = k1 + k2;
-		document.getElementById("bp_passivo").innerHTML = tmp;
-		/*
-		asd = /#/.exec(lines[i]);
-		console.log(asd, lines[i])
-		if(!asd)
-			ble += lines[i] + "<br \\>";
-		*/
-		tmp = "\\\[\\it\\text{Liquidez Imediata} = \\frac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} = \\\]";
-		tmp = "\\\[\\it\\text{Liquidez Corrente} = \\frac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} = \\frac{" + periodo.AC + "}{" + periodo.PC + "} = " + (periodo.AC / periodo.PC).toPrecision(2) + "\\\]";
-		document.getElementById("tabs-8").innerHTML = ble;
 		
-		document.getElementById("tabs-3").innerHTML = tmp;
+		// Passivo
+		tmp = bal("<b>Passivo circulante:</b><br />", periodo.pa_circ);
+		txt = tmp[0];
+		periodo.PC = tmp[1];
+		
+		txt += "<br />";
+		
+		tmp = bal("<b>Passivo não circulante:</b><br />", periodo.pa_n_circ);
+		txt += tmp[0];
+		periodo.PNC = tmp[1];
+		
+		txt += "<br />";
+		
+		txt += "<b><i>total Passivo: " + (periodo.PC + periodo.PNC) + "</i></b><br />";
+		periodo.P = periodo.PC + periodo.PNC;
+		
+		document.getElementById("bp_passivo").innerHTML = txt;
+	}
+	
+	
+	//## Liquidez ##//
+	function liquidez()
+	{
+		txt = ""
+		txt += "\\\[\\it\\text{Liquidez Imediata} = \\frac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} = \\\]<br />\n";
+		txt += "\\\[\\it\\text{Liquidez Corrente} = \\frac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} = \\frac{" + periodo.AC + "}{" + periodo.PC + "} = " + (periodo.AC / periodo.PC).toPrecision(2) + "\\\]<br />\n";
+		
+		document.getElementById("tabs-3").innerHTML = txt;
 		
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 	}
@@ -221,6 +215,7 @@ Capital  = 280
 	
     <div id="tabs-3">
 		<p>
+			[EM CONSTRUÇÃO]
 		</p>
     </div>
 	
