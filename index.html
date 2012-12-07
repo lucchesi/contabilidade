@@ -17,11 +17,34 @@
 	
 	
 	function processa() {
+		//## Parsear os dados ##//
+		bla = document.getElementById("dados").value;
+		lines = bla.split("\n");
+		ativo = false;
+		circ = false;
+		ble = "";
+		periodos = new Array();
+		
+		function periodo()
+		{
+			this.nome = "X1";
+			this.at_circ = new Array();
+		}
+		
+		for(i in lines)
+		{
+			asd = /#/.exec(lines[i]);
+			console.log(asd, lines[i])
+			if(!asd)
+				ble += lines[i] + "<br \\>";
+		}
+		
+		document.getElementById("tabs-8").innerHTML = ble;
 		
 	}
     </script>
 </head>
-<body>
+<body onload="javascript:processa()">
  
 <div id="tabs">
     <ul>
@@ -38,7 +61,27 @@
 	
 	
     <div id="tabs-1">
-		<textarea id="dados" rows="12" cols="60"  onkeydown="javascript:processa();" onkeyup="javascript:processa();"></textarea><br />
+		<textarea id="dados" rows="12" cols="60"  onkeydown="javascript:processa();" onkeyup="javascript:processa();">
+## Período = X1
+# Ativo circulante:
+Caixa = 120
+Ações = 20
+Estoques = 260
+
+# Ativo não circulante:
+Máquinas  e equipamentos = 70
+Móveis = 10
+Instalações = 170
+
+# Passivo circulante:
+Impostos a pagar = 10
+Fornecedores = 260
+
+# Passivo não circulante:
+Financiamento de Longo Prazo =  200
+Aquisição marca = 100
+Capital  = 280
+		</textarea><br />
     </div>
 	
     <div id="tabs-2">
