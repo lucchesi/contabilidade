@@ -2,7 +2,7 @@
  
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="iso-8859-1" />
     <title>Contabilidade</title>
 	
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
@@ -20,95 +20,95 @@
 	//## Dados ##//
 	txts = [];
 	txts["0"] = [
-"## Per√≠odo = 31-12-X4",
+"## PerÌodo = 31-12-X4",
 "# Ativo circulante:",
 "Caixa  = 400",
 "Duplicatas  = 600",
 "Estoques  = 1000",
 "",
-"# Ativo n√£o circulante:",
-"Realiz√°vel a LP   = 200",
+"# Ativo n„o circulante:",
+"Realiz·vel a LP   = 200",
 "Investimento  = 2000",
 "Imobilizado  = 1000",
-"Intang√≠vel  = 1000",
+"IntangÌvel  = 1000",
 "",
 "# Passivo circulante:",
 "Fornecedores  = 200",
 "Impostos  = 2000",
-"Outras d√≠vidas  = 200",
+"Outras dÌvidas  = 200",
 "",
-"# Passivo n√£o circulante:",
-"Exig√≠vel a LP   = 2800",
+"# Passivo n„o circulante:",
+"ExigÌvel a LP   = 2800",
 "Capital  = 800",
 "Reserva de lucros  = 200",
 "",
 "",
 "",
-"## Per√≠odo = 31-12-X5",
+"## PerÌodo = 31-12-X5",
 "# Ativo circulante:",
 "Caixa  = 500",
 "Duplicatas  = 1000",
 "Estoques  = 1300",
 "",
-"# Ativo n√£o circulante:",
-"Realiz√°vel a LP   = 300",
+"# Ativo n„o circulante:",
+"Realiz·vel a LP   = 300",
 "Investimento  = 1000",
 "Imobilizado  = 1500",
-"Intang√≠vel  = 900",
+"IntangÌvel  = 900",
 "",
 "# Passivo circulante:",
 "Fornecedores  = 300",
 "Impostos  = 1900",
-"Outras d√≠vidas  = 500",
+"Outras dÌvidas  = 500",
 "",
-"# Passivo n√£o circulante:",
-"Exig√≠vel a LP   = 2500",
+"# Passivo n„o circulante:",
+"ExigÌvel a LP   = 2500",
 "Capital  = 1000",
 "Reserva de lucros  = 300",
 ""].join("\n");
 
 	txts["1"] = [
-"## Per√≠odo = X1",
+"## PerÌodo = X1",
 "# Ativo circulante:",
 "Caixa = 120",
-"A√ß√µes = 20",
+"AÁıes = 20",
 "Estoques = 260",
 "",
-"# Ativo n√£o circulante:",
-"M√°quinas  e equipamentos = 70",
-"M√≥veis = 10",
-"Instala√ß√µes = 170",
-"Aquisi√ß√£o marca = 100",
+"# Ativo n„o circulante:",
+"M·quinas  e equipamentos = 70",
+"MÛveis = 10",
+"InstalaÁıes = 170",
+"AquisiÁ„o marca = 100",
 "",
 "# Passivo circulante:",
 "Impostos a pagar = 10",
 "Fornecedores = 260",
 "",
-"# Passivo n√£o circulante:",
+"# Passivo n„o circulante:",
 "Financiamento de Longo Prazo =  200",
 "Capital  = 280",
 ""].join("\n");
 
 	txts["2"] = [
-"## Per√≠odo = X1",
+"## PerÌodo = X1",
 "# Ativo circulante:",
 "Bancos com movimento = 100",
 "",
-"# Ativo n√£o circulante:",
-"Instala√ß√µes = 50",
+"# Ativo n„o circulante:",
+"InstalaÁıes = 50",
 "Marcas e patentes = 30",
-"Participa√ß√µes em outras cias (controladas) = 80",
-"T√≠tulos a receber (2,5 anos)  = 70",
-"Im√≥veis em uso = 200",
+"ParticipaÁıes em outras cias (controladas) = 80",
+"TÌtulos a receber (2,5 anos)  = 70",
+"ImÛveis em uso = 200",
 "",
 "# Passivo circulante:",
-"Sal√°rio a pagar = 10",
+"Sal·rio a pagar = 10",
 "Fornecedores = 40",
 "Imposto de renda a pagar = 30",
 "",
-"# Passivo n√£o circulante:",
+"# Passivo n„o circulante:",
 "Capital social = 300",
-"Empr√©stimos banc√°rios (1,5 ano) = 50",
+"EmprÈstimos banc·rios (1,5 ano) = 50",
 "Reserva de lucro = 100",
 ""].join("\n");
 
@@ -160,7 +160,7 @@
 		for(i in lines)
 		{
 			// Periodo novo
-			asd = /Per[i√≠]odo/.exec(lines[i]);
+			asd = /Per[iÌ]odo/.exec(lines[i]);
 			if(asd)
 			{
 				asd = lines[i].split(" = ");
@@ -184,8 +184,8 @@
 			}
 			if (cebola(/Ativo circulante/, true, true)) continue;
 			if (cebola(/Passivo circulante/, false, true)) continue;
-			if (cebola(/Ativo n√£o circulante/, true, false)) continue;
-			if (cebola(/Passivo n√£o circulante/, false, false)) continue;
+			if (cebola(/Ativo n„o circulante/, true, false)) continue;
+			if (cebola(/Passivo n„o circulante/, false, false)) continue;
 			
 			// Joga a linha na categoria atual
 			if(lines[i]) {
@@ -210,7 +210,7 @@
 	}
 	
 	
-	//## Balan√ßo Patrimonial ##//
+	//## BalanÁo Patrimonial ##//
 	function balanco()
 	{
 		function bal(txt, lst) {
@@ -229,7 +229,7 @@
 			tmp = bal("<b>Ativo circulante:</b><br />", periodo[atual].at_circ);
 			periodo[atual].AC = tmp[1];
 			
-			tmp = bal("<b>Ativo n√£o circulante:</b><br />", periodo[atual].at_n_circ);
+			tmp = bal("<b>Ativo n„o circulante:</b><br />", periodo[atual].at_n_circ);
 			periodo[atual].ANC = tmp[1];
 			periodo[atual].A = periodo[atual].AC + periodo[atual].ANC;
 			
@@ -237,7 +237,7 @@
 			tmp = bal("<b>Passivo circulante:</b><br />", periodo[atual].pa_circ);
 			periodo[atual].PC = tmp[1];
 			
-			tmp = bal("<b>Passivo n√£o circulante:</b><br />", periodo[atual].pa_n_circ);
+			tmp = bal("<b>Passivo n„o circulante:</b><br />", periodo[atual].pa_n_circ);
 			periodo[atual].PNC = tmp[1];
 			
 			periodo[atual].P = periodo[atual].PC + periodo[atual].PNC;
@@ -308,7 +308,7 @@
 			"	<tr valign=\"top\">";
 		yadda("Ativo circulante", "at_circ", "AC");
 		espaco( count(periodo[atual].pa_circ) - count(periodo[atual].at_circ) );
-		yadda("Ativo n√£o circulante", "at_n_circ", "ANC");
+		yadda("Ativo n„o circulante", "at_n_circ", "ANC");
 		espaco( count(periodo[atual].pa_n_circ) - count(periodo[atual].at_n_circ) );
 		total("Total ativo", "A");
 		txt += "</table>";
@@ -321,7 +321,7 @@
 			"	<tr valign=\"top\">";
 		yadda("Passivo circulante", "pa_circ", "PC");
 		espaco( count(periodo[atual].at_circ) - count(periodo[atual].pa_circ) );
-		yadda("Passivo n√£o circulante", "pa_n_circ", "PNC");
+		yadda("Passivo n„o circulante", "pa_n_circ", "PNC");
 		espaco( count(periodo[atual].at_n_circ) - count(periodo[atual].pa_n_circ) );
 		total("Total passivo + PL", "P");
 		txt += "</table>";
@@ -336,7 +336,7 @@
 		txt = ""
 		for (atual in periodo){
 			txt += "<b>" + atual + "</b><br />";
-			//txt += "\\\[\\it\\text{Liquidez Imediata} = \\dfrac{\\it\\text{Dispon√≠vel}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{\\text{aaa}}{\\text{bbb}} =  c\\\]<br />\n";
+			//txt += "\\\[\\it\\text{Liquidez Imediata} = \\dfrac{\\it\\text{DisponÌvel}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{\\text{aaa}}{\\text{bbb}} =  c\\\]<br />\n";
 			
 			txt += "\\\[\\it\\text{Liquidez Corrente} = \\dfrac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{" + periodo[atual].AC + "}{" + periodo[atual].PC + "} = " + (periodo[atual].AC / periodo[atual].PC).toPrecision(2) + "\\\]<br />\n";
 			
@@ -348,7 +348,7 @@
 				}
 			}
 			
-			//txt += "\\\[\\it\\text{Liquidez Seca} = \\dfrac{\\it\\text{Ativo circulante + Realiz√°vel a LP}}{\\it\\text{Passivo circulante + Exig√≠vel a LP}} \\hspace{18pt} = \\dfrac{\\text{aaa + bbb}}{\\text{ccc + ddd}} \\hspace{6pt} = eee\\\]<br />\n";
+			//txt += "\\\[\\it\\text{Liquidez Seca} = \\dfrac{\\it\\text{Ativo circulante + Realiz·vel a LP}}{\\it\\text{Passivo circulante + ExigÌvel a LP}} \\hspace{18pt} = \\dfrac{\\text{aaa + bbb}}{\\text{ccc + ddd}} \\hspace{6pt} = eee\\\]<br />\n";
 		}
 		
 		document.getElementById("tabs-3").innerHTML = txt;
@@ -362,13 +362,13 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Entrada de dados</a></li>
-        <li><a href="#tabs-2">Balan√ßo Patrimonial (BP)</a></li>
-        <li><a href="#tabs-3">Indicadores ‚Äì Liquidez</a></li>
-        <li><a href="#tabs-4">Demonstra√ß√£o de Resultado do Exerc√≠cio (DRE)</a></li>
-        <li><a href="#tabs-5">Indicadores ‚Äì Situa√ß√£o econ√¥mica</a></li>
-        <li><a href="#tabs-6">Demonstra√ß√£o dos fluxos de caixa (DFC)</a></li>
-        <li><a href="#tabs-7">Demonstra√ß√£o dos Lucros e Preju√≠zos Acumulados (DLPAc)</a></li>
-        <li><a href="#tabs-8">Demonstra√ß√£o da muta√ß√£o do PL (DMPL)</a></li>
+        <li><a href="#tabs-2">BalanÁo Patrimonial (BP)</a></li>
+        <li><a href="#tabs-3">Indicadores - Liquidez</a></li>
+        <li><a href="#tabs-4">DemonstraÁ„o de Resultado do ExercÌcio (DRE)</a></li>
+        <li><a href="#tabs-5">Indicadores - SituaÁ„o econÙmica</a></li>
+        <li><a href="#tabs-6">DemonstraÁ„o dos fluxos de caixa (DFC)</a></li>
+        <li><a href="#tabs-7">DemonstraÁ„o dos Lucros e PrejuÌzos Acumulados (DLPAc)</a></li>
+        <li><a href="#tabs-8">DemonstraÁ„o da mutaÁ„o do PL (DMPL)</a></li>
     </ul>
 	
 	
@@ -386,37 +386,37 @@
 	
     <div id="tabs-3">
 		<p>
-			[EM CONSTRU√á√ÉO]
+			[EM CONSTRU«√O]
 		</p>
     </div>
 	
     <div id="tabs-4">
 		<p>
-			[EM CONSTRU√á√ÉO]
+			[EM CONSTRU«√O]
 		</p>
     </div>
 	
     <div id="tabs-5">
 		<p>
-			[EM CONSTRU√á√ÉO]
+			[EM CONSTRU«√O]
 		</p>
     </div>
 	
     <div id="tabs-6">
 		<p>
-			[EM CONSTRU√á√ÉO]
+			[EM CONSTRU«√O]
 		</p>
     </div>
 	
     <div id="tabs-7">
 		<p>
-			[EM CONSTRU√á√ÉO]
+			[EM CONSTRU«√O]
 		</p>
     </div>
 	
     <div id="tabs-8">
 		<p>
-			[EM CONSTRU√á√ÉO]
+			[EM CONSTRU«√O]
 		</p>
     </div>
 </div>
