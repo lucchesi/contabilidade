@@ -17,6 +17,117 @@
 	});
 	
 	
+	//## Dados ##//
+	txts = [];
+	txts["0"] = [
+"## Período = 31-12-X4",
+"# Ativo circulante:",
+"Caixa  = 400",
+"Duplicatas  = 600",
+"Estoques  = 1000",
+"",
+"# Ativo não circulante:",
+"Realizável a LP   = 200",
+"Investimento  = 2000",
+"Imobilizado  = 1000",
+"Intangível  = 1000",
+"",
+"# Passivo circulante:",
+"Fornecedores  = 200",
+"Impostos  = 2000",
+"Outras dívidas  = 200",
+"",
+"# Passivo não circulante:",
+"Exigível a LP   = 2800",
+"Capital  = 800",
+"Reserva de lucros  = 200",
+"",
+"",
+"",
+"## Período = 31-12-X5",
+"# Ativo circulante:",
+"Caixa  = 500",
+"Duplicatas  = 1000",
+"Estoques  = 1300",
+"",
+"# Ativo não circulante:",
+"Realizável a LP   = 300",
+"Investimento  = 1000",
+"Imobilizado  = 1500",
+"Intangível  = 900",
+"",
+"# Passivo circulante:",
+"Fornecedores  = 300",
+"Impostos  = 1900",
+"Outras dívidas  = 500",
+"",
+"# Passivo não circulante:",
+"Exigível a LP   = 2500",
+"Capital  = 1000",
+"Reserva de lucros  = 300",
+""].join("\n");
+
+	txts["1"] = [
+"## Período = X1",
+"# Ativo circulante:",
+"Caixa = 120",
+"Ações = 20",
+"Estoques = 260",
+"",
+"# Ativo não circulante:",
+"Máquinas  e equipamentos = 70",
+"Móveis = 10",
+"Instalações = 170",
+"Aquisição marca = 100",
+"",
+"# Passivo circulante:",
+"Impostos a pagar = 10",
+"Fornecedores = 260",
+"",
+"# Passivo não circulante:",
+"Financiamento de Longo Prazo =  200",
+"Capital  = 280",
+""].join("\n");
+
+	txts["2"] = [
+"## Período = X1",
+"# Ativo circulante:",
+"Bancos com movimento = 100",
+"",
+"# Ativo não circulante:",
+"Instalações = 50",
+"Marcas e patentes = 30",
+"Participações em outras cias (controladas) = 80",
+"Títulos a receber (2,5 anos)  = 70",
+"Imóveis em uso = 200",
+"",
+"# Passivo circulante:",
+"Salário a pagar = 10",
+"Fornecedores = 40",
+"Imposto de renda a pagar = 30",
+"",
+"# Passivo não circulante:",
+"Capital social = 300",
+"Empréstimos bancários (1,5 ano) = 50",
+"Reserva de lucro = 100",
+""].join("\n");
+
+	function troca() {
+		document.getElementById("dados").value = txts[ document.getElementById("select").value ];
+		periodo = [];
+		processa();
+	}
+	
+	
+	//## No inicio ##//
+	function init() {
+		document.getElementById("dados").value = txts["1"];
+		for (i in txts)
+			document.getElementById("select").innerHTML += "<option value=\"" + i + "\">" + i + "</option><br />";
+		troca();
+	}
+	
+	
 	//## Processa tudo ##//
 	function processa() {
 		parseia();
@@ -169,7 +280,7 @@
 	}
     </script>
 </head>
-<body onload="javascript:processa()">
+<body onload="javascript:init()">
  
 <div id="tabs">
     <ul>
@@ -187,35 +298,12 @@
 	
     <div id="tabs-1">
 		<textarea id="dados" rows="12" cols="60"  onkeydown="javascript:processa();" onkeyup="javascript:processa();">
-## Período = X1
-# Ativo circulante:
-Caixa = 120
-Ações = 20
-Estoques = 260
-
-# Ativo não circulante:
-Máquinas  e equipamentos = 70
-Móveis = 10
-Instalações = 170
-Aquisição marca = 100
-
-# Passivo circulante:
-Impostos a pagar = 10
-Fornecedores = 260
-
-# Passivo não circulante:
-Financiamento de Longo Prazo =  200
-Capital  = 280
 		</textarea><br />
+		<select id="select" onChange="javascript:troca()">
+		</select>
     </div>
 	
     <div id="tabs-2">
-		<table>
-			<tr valign="top">
-				<td id="bp_ativo"> </td>
-				<td id="bp_passivo"> </td>
-			</tr>
-		</table>
     </div>
 	
 	
