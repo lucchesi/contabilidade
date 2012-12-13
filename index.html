@@ -213,33 +213,20 @@
 	//## Balanço Patrimonial ##//
 	function balanco()
 	{
-		function bal(txt, lst) {
+		function bal(lst) {
 			k = 0;
-			for (i in lst){
-				txt += i + ": " + lst[i] + "</b><br />";
-				k += parseFloat(lst[i]);
-			}
-			txt += "<i>total: " + k + "</i><br />";
-			
-			return [txt, k];
+			for (i in lst) k += parseFloat(lst[i]);
+			return k;
 		}
-		
 		for (atual in periodo) {
 			// Ativo
-			tmp = bal("<b>Ativo circulante:</b><br />", periodo[atual].at_circ);
-			periodo[atual].AC = tmp[1];
-			
-			tmp = bal("<b>Ativo não circulante:</b><br />", periodo[atual].at_n_circ);
-			periodo[atual].ANC = tmp[1];
+			periodo[atual].AC = bal(periodo[atual].at_circ);
+			periodo[atual].ANC = bal(periodo[atual].at_n_circ);
 			periodo[atual].A = periodo[atual].AC + periodo[atual].ANC;
 			
 			// Passivo
-			tmp = bal("<b>Passivo circulante:</b><br />", periodo[atual].pa_circ);
-			periodo[atual].PC = tmp[1];
-			
-			tmp = bal("<b>Passivo não circulante:</b><br />", periodo[atual].pa_n_circ);
-			periodo[atual].PNC = tmp[1];
-			
+			periodo[atual].PC = bal(periodo[atual].pa_circ);
+			periodo[atual].PNC = bal(periodo[atual].pa_n_circ);
 			periodo[atual].P = periodo[atual].PC + periodo[atual].PNC;
 		}
 		
@@ -251,7 +238,7 @@
 			"	</tr>" +
 			"</table><br /><br />";
 		
-		function yadda(nam, vari, tot) {
+		function yadda(nam, vari, tot, n) {
 			txt += 
 				"		<td width=100%><b>" + nam + "</b></td>";
 			// Lista os periodos
@@ -266,6 +253,8 @@
 				for (j in periodo) txt += "		<td>" + periodo[j][vari][i] + "</td>";
 				txt += "	</tr>";
 			}
+			
+			espaco(n);
 			
 			txt += 
 				"	<tr valign=\"top\">" +
@@ -294,6 +283,8 @@
 		}
 		
 		function total(nome, vari) {
+			if (nome == "Total Passivo")
+				nome = "Total Passivo + PL";
 			txt += 
 				"	<tr valign=\"top\">" +
 				"		<td><b>" + nome + "</b></td>";
@@ -301,32 +292,29 @@
 			txt += "	</tr>";
 		}
 		
+		function joao(jose, joaquim, manoel, k) {
+			txt = "";
+			txt += 
+				"<table border=1 width=100% height=100%>" +
+				"	<tr valign=\"top\">";
+			
+			// Circulante
+			n = k * ( count(periodo[atual].pa_circ) - count(periodo[atual].at_circ) );
+			yadda(jose + " circulante", joaquim + "_circ", manoel + "C", n);
+			espaco(1);
+			
+			// Não circulante
+			n = k * ( count(periodo[atual].pa_n_circ) - count(periodo[atual].at_n_circ) );
+			yadda(jose + " não circulante", joaquim + "_n_circ", manoel + "NC", n);
+			espaco(1);
+			
+			total("Total " + jose, manoel);
+			txt += "</table>";
+			return txt;
+		}
 		
-		txt = "";
-		txt += 
-			"<table border=1 width=100% height=100%>" +
-			"	<tr valign=\"top\">";
-		yadda("Ativo circulante", "at_circ", "AC");
-		espaco( count(periodo[atual].pa_circ) - count(periodo[atual].at_circ) );
-		yadda("Ativo não circulante", "at_n_circ", "ANC");
-		espaco( count(periodo[atual].pa_n_circ) - count(periodo[atual].at_n_circ) );
-		total("Total ativo", "A");
-		txt += "</table>";
-		
-		document.getElementById("bp_ativo").innerHTML = txt;
-		
-		txt = "";
-		txt += 
-			"<table border=1 width=100% height=100%>" +
-			"	<tr valign=\"top\">";
-		yadda("Passivo circulante", "pa_circ", "PC");
-		espaco( count(periodo[atual].at_circ) - count(periodo[atual].pa_circ) );
-		yadda("Passivo não circulante", "pa_n_circ", "PNC");
-		espaco( count(periodo[atual].at_n_circ) - count(periodo[atual].pa_n_circ) );
-		total("Total passivo + PL", "P");
-		txt += "</table>";
-		document.getElementById("bp_passivo").innerHTML = txt;
-		
+		document.getElementById("bp_ativo").innerHTML = joao("Ativo", "at", "A", 1);
+		document.getElementById("bp_passivo").innerHTML = joao("Passivo", "pa", "P", -1);
 	}
 	
 	
