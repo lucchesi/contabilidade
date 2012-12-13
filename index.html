@@ -132,6 +132,8 @@
 	function processa() {
 		parseia();
 		balanco();
+		horizontal();
+		vertical();
 		liquidez();
 	}
 	
@@ -207,71 +209,37 @@
 			}
 		}
 		
-	}
-	
-	
-	//## Balanço Patrimonial ##//
-	function balanco()
-	{
-		function bal(lst) {
+		// Conta os totais
+		function count(lst) {
 			k = 0;
 			for (i in lst) k += parseFloat(lst[i]);
 			return k;
 		}
 		for (atual in periodo) {
 			// Ativo
-			periodo[atual].AC = bal(periodo[atual].at_circ);
-			periodo[atual].ANC = bal(periodo[atual].at_n_circ);
+			periodo[atual].AC = count(periodo[atual].at_circ);
+			periodo[atual].ANC = count(periodo[atual].at_n_circ);
 			periodo[atual].A = periodo[atual].AC + periodo[atual].ANC;
 			
 			// Passivo
-			periodo[atual].PC = bal(periodo[atual].pa_circ);
-			periodo[atual].PNC = bal(periodo[atual].pa_n_circ);
+			periodo[atual].PC = count(periodo[atual].pa_circ);
+			periodo[atual].PNC = count(periodo[atual].pa_n_circ);
 			periodo[atual].P = periodo[atual].PC + periodo[atual].PNC;
 		}
-		
-		document.getElementById("tabs-2").innerHTML += 
-			"<table>" +
-			"	<tr valign=\"top\">" +
-			"		<td id=\"bp_ativo\" width=50%> </td>" +
-			"		<td id=\"bp_passivo\" width=50%> </td>" +
-			"	</tr>" +
-			"</table><br /><br />";
-		
-		function yadda(nam, vari, tot, n) {
-			txt += 
-				"		<td width=100%><b>" + nam + "</b></td>";
-			// Lista os periodos
-			for (i in periodo) txt += "		<td style=\"white-space:nowrap;\"><b>" + i + "</b></td>";
-			txt += "	</tr>";
-			
-			// Cada linha
-			for (i in periodo[atual][vari]) {
-				txt += 
-				"	<tr valign=\"top\">" +
-				"		<td>" + i + "</td>";
-				for (j in periodo) txt += "		<td>" + periodo[j][vari][i] + "</td>";
-				txt += "	</tr>";
-			}
-			
-			espaco(n);
-			
-			txt += 
-				"	<tr valign=\"top\">" +
-				"		<td><i>total</i></td>";
-			// Lista os periodos
-			for (i in periodo) txt += "		<td><i>" + periodo[i][tot] + "</i></td>";
-			txt += "	</tr>";
-			
-			
-		}
-		
+	}
+	
+	
+	//## Balanço Patrimonial ##//
+	function balanco()
+	{
+		// Conta o numero de elementos em um hash
 		function count(obj) {
 			size = 0;
 			for (asd in obj) size++;
 			return size;
 		}
 		
+		// Imprime uma linha em branco na tabela
 		function espaco(n) {
 			for(k=0; k < n; k++) {
 				txt += "	<tr>";
@@ -282,6 +250,7 @@
 			}
 		}
 		
+		// Calcula o total do ativo ou do passivo (tabela inteira)
 		function total(nome, vari) {
 			if (nome == "Total Passivo")
 				nome = "Total Passivo + PL";
@@ -292,7 +261,39 @@
 			txt += "	</tr>";
 		}
 		
-		function joao(jose, joaquim, manoel, k) {
+		// Formata pra cada subtabela (Ativo circ., Passivo não circ., etc)
+		function meia_meia_tabela(nam, vari, tot, n) {
+			//# Título #//
+			txt += 
+				"		<td width=100%><b>" + nam + "</b></td>";
+			// Lista os periodos
+			for (i in periodo) txt += "		<td style=\"white-space:nowrap;\"><b>" + i + "</b></td>";
+			txt += "	</tr>";
+			
+			//# Cada linha #//
+			for (i in periodo[atual][vari]) {
+				txt += 
+				"	<tr valign=\"top\">" +
+				"		<td>" + i + "</td>";
+				// Lista os valores pra cada periodo
+				for (j in periodo) txt += "		<td>" + periodo[j][vari][i] + "</td>";
+				txt += "	</tr>";
+			}
+			
+			espaco(n);
+			
+			//# Total #//
+			txt += 
+				"	<tr valign=\"top\">" +
+				"		<td><i>total</i></td>";
+			// Lista os valores pra cada periodo
+			for (i in periodo) txt += "		<td><i>" + periodo[i][tot] + "</i></td>";
+			txt += "	</tr>";
+		}
+		
+		
+		// Formata cada tabela (Ativo ou passivo)
+		function meia_tabela(Ativo_ou_Passivo, at_ou_pa, A_ou_P, k) {
 			txt = "";
 			txt += 
 				"<table border=1 width=100% height=100%>" +
@@ -300,21 +301,252 @@
 			
 			// Circulante
 			n = k * ( count(periodo[atual].pa_circ) - count(periodo[atual].at_circ) );
-			yadda(jose + " circulante", joaquim + "_circ", manoel + "C", n);
+			meia_meia_tabela(Ativo_ou_Passivo + " circulante", at_ou_pa + "_circ", A_ou_P + "C", n);
 			espaco(1);
 			
 			// Não circulante
 			n = k * ( count(periodo[atual].pa_n_circ) - count(periodo[atual].at_n_circ) );
-			yadda(jose + " não circulante", joaquim + "_n_circ", manoel + "NC", n);
+			meia_meia_tabela(Ativo_ou_Passivo + " não circulante", at_ou_pa + "_n_circ", A_ou_P + "NC", n);
 			espaco(1);
 			
-			total("Total " + jose, manoel);
+			total("Total " + Ativo_ou_Passivo, A_ou_P);
 			txt += "</table>";
 			return txt;
 		}
 		
-		document.getElementById("bp_ativo").innerHTML = joao("Ativo", "at", "A", 1);
-		document.getElementById("bp_passivo").innerHTML = joao("Passivo", "pa", "P", -1);
+		
+		// Executa tudo
+		document.getElementById("tabs-2").innerHTML = 
+			"<table>" +
+			"	<tr valign=\"top\">" +
+			"		<td id=\"bp_ativo\" width=50%> </td>" +
+			"		<td id=\"bp_passivo\" width=50%> </td>" +
+			"	</tr>" +
+			"</table><br /><br />";
+		document.getElementById("bp_ativo").innerHTML = meia_tabela("Ativo", "at", "A", 1);
+		document.getElementById("bp_passivo").innerHTML = meia_tabela("Passivo", "pa", "P", -1);
+	}
+	
+	
+	//## Analise Horizontal ##//
+	function horizontal()
+	{
+		// Conta o numero de elementos em um hash
+		function count(obj) {
+			size = 0;
+			for (asd in obj) size++;
+			return size;
+		}
+		
+		// Imprime uma linha em branco na tabela
+		function espaco(n) {
+			for(k=0; k < n; k++) {
+				txt += "	<tr>";
+				txt += "	<td>&nbsp;</td>";
+				for (l in periodo)
+					txt += "	<td>&nbsp;</td>";
+				txt += "</tr>";
+			}
+		}
+		
+		// Calcula o total do ativo ou do passivo (tabela inteira)
+		function total(nome, vari) {
+			if (nome == "Total Passivo")
+				nome = "Total Passivo + PL";
+			txt += 
+				"	<tr valign=\"top\">" +
+				"		<td><b>" + nome + "</b></td>";
+			first = null;
+			for (i in periodo) {
+				if (!first) first = i;
+				txt += "		<td><b>" + (100*periodo[i][vari]/periodo[first][vari]).toPrecision(4) + "</b></td>";
+			}
+			txt += "	</tr>";
+		}
+		
+		// Formata pra cada subtabela (Ativo circ., Passivo não circ., etc)
+		function meia_meia_tabela(nam, vari, tot, n) {
+			//# Título #//
+			txt += 
+				"		<td width=100%><b>" + nam + "</b></td>";
+			// Lista os periodos
+			for (i in periodo) txt += "		<td style=\"white-space:nowrap;\"><b>" + i + "</b></td>";
+			txt += "	</tr>";
+			
+			//# Cada linha #//
+			for (i in periodo[atual][vari]) {
+				txt += 
+				"	<tr valign=\"top\">" +
+				"		<td>" + i + "</td>";
+				// Lista os valores pra cada periodo
+				first = null;
+				for (j in periodo) {
+					if (!first) first = j;
+					txt += "		<td>" + (100*periodo[j][vari][i]/periodo[first][vari][i]).toPrecision(4) + "</td>";
+				}
+				txt += "	</tr>";
+			}
+			
+			espaco(n);
+			
+			//# Total #//
+			txt += 
+				"	<tr valign=\"top\">" +
+				"		<td><i>total</i></td>";
+			// Lista os valores pra cada periodo
+			first = null;
+			for (i in periodo) {
+				if (!first) first = i;
+				txt += "		<td><i>" + (100*periodo[i][tot]/periodo[first][tot]).toPrecision(4) + "</i></td>";
+			}
+			txt += "	</tr>";
+		}
+		
+		
+		// Formata cada tabela (Ativo ou passivo)
+		function meia_tabela(Ativo_ou_Passivo, at_ou_pa, A_ou_P, k) {
+			txt = "";
+			txt += 
+				"<table border=1 width=100% height=100%>" +
+				"	<tr valign=\"top\">";
+			
+			// Circulante
+			n = k * ( count(periodo[atual].pa_circ) - count(periodo[atual].at_circ) );
+			meia_meia_tabela(Ativo_ou_Passivo + " circulante", at_ou_pa + "_circ", A_ou_P + "C", n);
+			espaco(1);
+			
+			// Não circulante
+			n = k * ( count(periodo[atual].pa_n_circ) - count(periodo[atual].at_n_circ) );
+			meia_meia_tabela(Ativo_ou_Passivo + " não circulante", at_ou_pa + "_n_circ", A_ou_P + "NC", n);
+			espaco(1);
+			
+			total("Total " + Ativo_ou_Passivo, A_ou_P);
+			txt += "</table>";
+			return txt;
+		}
+		
+		
+		// Executa tudo
+		if(count(periodo)>1) {
+			document.getElementById("tabs-9").innerHTML = 
+				"<table>" +
+				"	<tr valign=\"top\">" +
+				"		<td id=\"hor_ativo\" width=50%> </td>" +
+				"		<td id=\"hor_passivo\" width=50%> </td>" +
+				"	</tr>" +
+				"</table><br /><br />";
+			document.getElementById("hor_ativo").innerHTML = meia_tabela("Ativo", "at", "A", 1);
+			document.getElementById("hor_passivo").innerHTML = meia_tabela("Passivo", "pa", "P", -1);
+		}
+		else
+			document.getElementById("tabs-9").innerHTML = "<p>Só tem um período</p>";
+	}
+	
+	
+	//## Analise Vertical ##//
+	function vertical()
+	{
+		// Conta o numero de elementos em um hash
+		function count(obj) {
+			size = 0;
+			for (asd in obj) size++;
+			return size;
+		}
+		
+		// Imprime uma linha em branco na tabela
+		function espaco(n) {
+			for(k=0; k < n; k++) {
+				txt += "	<tr>";
+				txt += "	<td>&nbsp;</td>";
+				for (l in periodo)
+					txt += "	<td>&nbsp;</td>";
+				txt += "</tr>";
+			}
+		}
+		
+		// Calcula o total do ativo ou do passivo (tabela inteira)
+		function total(nome, vari) {
+			if (nome == "Total Passivo") {
+				nome = "Total Passivo + PL";
+				A_ou_P = "P";
+			}
+			else
+				A_ou_P = "A";
+			
+			txt += 
+				"	<tr valign=\"top\">" +
+				"		<td><b>" + nome + "</b></td>";
+			first = null;
+			for (i in periodo) txt += "		<td><b>" + (100*periodo[i][vari]/periodo[i][A_ou_P]).toPrecision(4) + "</b></td>";
+			txt += "	</tr>";
+		}
+		
+		// Formata pra cada subtabela (Ativo circ., Passivo não circ., etc)
+		function meia_meia_tabela(nam, vari, tot, n) {
+			//# Título #//
+			txt += 
+				"		<td width=100%><b>" + nam + "</b></td>";
+			// Lista os periodos
+			for (i in periodo) txt += "		<td style=\"white-space:nowrap;\"><b>" + i + "</b></td>";
+			txt += "	</tr>";
+			
+			//# Cada linha #//
+			for (i in periodo[atual][vari]) {
+				txt += 
+				"	<tr valign=\"top\">" +
+				"		<td>" + i + "</td>";
+				// Lista os valores pra cada periodo
+				first = null;
+				for (j in periodo) txt += "		<td>" + (100*periodo[j][vari][i]/periodo[j][tot[0]]).toPrecision(4) + "</td>";
+				txt += "	</tr>";
+			}
+			
+			espaco(n);
+			
+			//# Total #//
+			txt += 
+				"	<tr valign=\"top\">" +
+				"		<td><i>total</i></td>";
+			// Lista os valores pra cada periodo
+			first = null;
+			for (i in periodo) txt += "		<td><i>" + (100*periodo[i][tot]/periodo[i][tot[0]]).toPrecision(4) + "</i></td>";
+			txt += "	</tr>";
+		}
+		
+		
+		// Formata cada tabela (Ativo ou passivo)
+		function meia_tabela(Ativo_ou_Passivo, at_ou_pa, A_ou_P, k) {
+			txt = "";
+			txt += 
+				"<table border=1 width=100% height=100%>" +
+				"	<tr valign=\"top\">";
+			
+			// Circulante
+			n = k * ( count(periodo[atual].pa_circ) - count(periodo[atual].at_circ) );
+			meia_meia_tabela(Ativo_ou_Passivo + " circulante", at_ou_pa + "_circ", A_ou_P + "C", n);
+			espaco(1);
+			
+			// Não circulante
+			n = k * ( count(periodo[atual].pa_n_circ) - count(periodo[atual].at_n_circ) );
+			meia_meia_tabela(Ativo_ou_Passivo + " não circulante", at_ou_pa + "_n_circ", A_ou_P + "NC", n);
+			espaco(1);
+			
+			total("Total " + Ativo_ou_Passivo, A_ou_P);
+			txt += "</table>";
+			return txt;
+		}
+		
+		
+		// Executa tudo
+		document.getElementById("tabs-A").innerHTML = 
+			"<table>" +
+			"	<tr valign=\"top\">" +
+			"		<td id=\"ver_ativo\" width=50%> </td>" +
+			"		<td id=\"ver_passivo\" width=50%> </td>" +
+			"	</tr>" +
+			"</table><br /><br />";
+		document.getElementById("ver_ativo").innerHTML = meia_tabela("Ativo", "at", "A", 1);
+		document.getElementById("ver_passivo").innerHTML = meia_tabela("Passivo", "pa", "P", -1);
 	}
 	
 	
@@ -323,7 +555,7 @@
 	{
 		txt = ""
 		for (atual in periodo){
-			txt += "<b>" + atual + "</b><br />";
+			txt += "<center><b>" + atual + ":</b></center><br />";
 			//txt += "\\\[\\it\\text{Liquidez Imediata} = \\dfrac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{\\text{aaa}}{\\text{bbb}} =  c\\\]<br />\n";
 			
 			txt += "\\\[\\it\\text{Liquidez Corrente} = \\dfrac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{" + periodo[atual].AC + "}{" + periodo[atual].PC + "} = " + (periodo[atual].AC / periodo[atual].PC).toPrecision(2) + "\\\]<br />\n";
@@ -351,6 +583,8 @@
     <ul>
         <li><a href="#tabs-1">Entrada de dados</a></li>
         <li><a href="#tabs-2">Balanço Patrimonial (BP)</a></li>
+        <li><a href="#tabs-9">Análise Horizontal</a></li>
+        <li><a href="#tabs-A">Análise Vertical</a></li>
         <li><a href="#tabs-3">Indicadores - Liquidez</a></li>
         <li><a href="#tabs-4">Demonstração de Resultado do Exercício (DRE)</a></li>
         <li><a href="#tabs-5">Indicadores - Situação econômica</a></li>
@@ -369,6 +603,9 @@
     </div>
 	
     <div id="tabs-2">
+		<p>
+			[EM CONSTRUÇÃO]
+		</p>
     </div>
 	
 	
@@ -403,6 +640,18 @@
     </div>
 	
     <div id="tabs-8">
+		<p>
+			[EM CONSTRUÇÃO]
+		</p>
+    </div>
+	
+    <div id="tabs-9">
+		<p>
+			[EM CONSTRUÇÃO]
+		</p>
+    </div>
+	
+    <div id="tabs-A">
 		<p>
 			[EM CONSTRUÇÃO]
 		</p>
