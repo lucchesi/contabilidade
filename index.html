@@ -112,9 +112,31 @@
 "Reserva de lucro = 100",
 ""].join("\n");
 
+	txts["3"] = [
+"## Período = X1",
+"# Ativo circulante:",
+"Bancos com movimento = 100",
+"Participações em outras cias (controladas) = 80",
+"",
+"# Ativo não circulante:",
+"Marcas e patentes = 30",
+"Títulos a receber (2,5 anos) = 70",
+"Imóveis em uso = 200",
+"Instalações = 50",
+"",
+"# Passivo circulante:",
+"Fornecedores = 40",
+"Imposto de renda a pagar = 30",
+"Salário a pagar = 10",
+"",
+"# Passivo não circulante:",
+"Capital social = 300",
+"Empréstimos bancários (1,5 ano) = 50",
+"Reserva de lucro = 100",
+""].join("\n");
+
 	function troca() {
 		document.getElementById("dados").value = txts[ document.getElementById("select").value ];
-		periodo = [];
 		processa();
 	}
 	
@@ -134,7 +156,7 @@
 		balanco();
 		horizontal();
 		vertical();
-		liquidez();
+		indicadores();
 	}
 	
 	
@@ -145,6 +167,8 @@
 	function parseia() {
 		banana = document.getElementById("dados").value;
 		lines = banana.split("\n");
+		
+		periodo = [];
 		
 		// "Classe" dos periodos
 		function _periodo(nome)
@@ -550,21 +574,24 @@
 	}
 	
 	
-	//## Liquidez ##//
-	function liquidez()
+	//## Indicadores ##//
+	function indicadores()
 	{
 		txt = ""
 		for (atual in periodo){
 			txt += "<center><b>" + atual + ":</b></center><br />";
+			
+			txt += "\\\[\\it\\text{Capital Circulante Líquido (CCL)} = \\it\\text{Ativo circulante} - \\it\\text{Passivo circulante} =  " + periodo[atual].AC + " - " + periodo[atual].PC + " = " + (periodo[atual].AC - periodo[atual].PC) + "\\\]<br />\n";
+			
 			//txt += "\\\[\\it\\text{Liquidez Imediata} = \\dfrac{\\it\\text{Disponível}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{\\text{aaa}}{\\text{bbb}} =  c\\\]<br />\n";
 			
-			txt += "\\\[\\it\\text{Liquidez Corrente} = \\dfrac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{" + periodo[atual].AC + "}{" + periodo[atual].PC + "} = " + (periodo[atual].AC / periodo[atual].PC).toPrecision(2) + "\\\]<br />\n";
+			txt += "\\\[\\it\\text{Liquidez Corrente (ILC)} = \\dfrac{\\it\\text{Ativo circulante}}{\\it\\text{Passivo circulante}} \\hspace{6pt} =  \\dfrac{" + periodo[atual].AC + "}{" + periodo[atual].PC + "} = " + (periodo[atual].AC / periodo[atual].PC).toPrecision(2) + "\\\]<br />\n";
 			
 			for(i in periodo[atual].at_circ) {
 				asd = /Estoques/.exec(i);
 				if(asd) {
 					estoques = periodo[atual].at_circ[i];
-					txt += "\\\[\\it\\text{Liquidez Seca} = \\dfrac{\\it\\text{Ativo circulante - Estoques}}{\\it\\text{Passivo circulante}} \\hspace{12pt} =  \\dfrac{\\text{" + periodo[atual].AC + " - " + estoques + "}}{\\text{" + periodo[atual].PC + "}} \\hspace{3pt} = " + ( (periodo[atual].AC-estoques) / periodo[atual].PC ).toPrecision(2) + "\\\]<br />\n";
+					txt += "\\\[\\it\\text{Liquidez Seca (ILS)} = \\dfrac{\\it\\text{Ativo circulante - Estoques}}{\\it\\text{Passivo circulante}} \\hspace{12pt} =  \\dfrac{\\text{" + periodo[atual].AC + " - " + estoques + "}}{\\text{" + periodo[atual].PC + "}} \\hspace{3pt} = " + ( (periodo[atual].AC-estoques) / periodo[atual].PC ).toPrecision(2) + "\\\]<br />\n";
 				}
 			}
 			
@@ -585,9 +612,8 @@
         <li><a href="#tabs-2">Balanço Patrimonial (BP)</a></li>
         <li><a href="#tabs-9">Análise Horizontal</a></li>
         <li><a href="#tabs-A">Análise Vertical</a></li>
-        <li><a href="#tabs-3">Indicadores - Liquidez</a></li>
+        <li><a href="#tabs-3">Indicadores</a></li>
         <li><a href="#tabs-4">Demonstração de Resultado do Exercício (DRE)</a></li>
-        <li><a href="#tabs-5">Indicadores - Situação econômica</a></li>
         <li><a href="#tabs-6">Demonstração dos fluxos de caixa (DFC)</a></li>
         <li><a href="#tabs-7">Demonstração dos Lucros e Prejuízos Acumulados (DLPAc)</a></li>
         <li><a href="#tabs-8">Demonstração da mutação do PL (DMPL)</a></li>
@@ -616,12 +642,6 @@
     </div>
 	
     <div id="tabs-4">
-		<p>
-			[EM CONSTRUÇÃO]
-		</p>
-    </div>
-	
-    <div id="tabs-5">
 		<p>
 			[EM CONSTRUÇÃO]
 		</p>
